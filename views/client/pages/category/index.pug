@@ -1,0 +1,16 @@
+extends ../../layouts/default.pug 
+include ../../mixins/box-head.pug
+
+block main
+  .container.my-3
+    .row
+      .col-12
+        +box-head(pageTitle)
+    .row
+      for tour of listCategory
+        .col-6.mb-3
+            div(class="card")
+              img(src=tour.image)
+              div(class="card-body")
+                h5(class="card-title") #{tour.description}
+                a(href=`/tours/${tour.slug}` class="btn btn-primary") Xem chi tiết
