@@ -7,6 +7,10 @@ const Category = sequelize.define("Category", {
         allowNull : false,
         primaryKey : true
     },
+    title : {
+        type : DataTypes.STRING(255),
+        allowNull : true
+    },
     description : {
         type : DataTypes.TEXT('long'),
         allowNull: true

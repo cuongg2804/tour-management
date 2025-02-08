@@ -27,7 +27,7 @@ export const index = async (req : Request, res : Response) => {
         tour["image"] = images[0];
         tour["price_special"] = +tour["price_special"];
     })
-    console.log(toursList);
+ 
     res.render("client/pages/tour/index.pug",{
         pageTitle: "Danh sách tour",
         toursList : toursList

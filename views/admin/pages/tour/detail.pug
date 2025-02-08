@@ -1,0 +1,52 @@
+extends ../../layouts/default.pug
+
+block main
+  h1(class="mb-4") #{pageTitle}
+
+
+  .card.mb-3
+      .card-header Chi tiết Tour #{detailTour.title}
+      .card-body
+        .row
+          .col-8
+
+        table(
+          class="table table-hover table-sm mt-3"
+        )
+          thead
+            tr
+              th Hình ảnh
+              th Tiêu đề
+              th Giá
+              th % Giảm giá
+              th Giá đặc biệt
+              th Còn lại
+              th Trạng thái
+              th Vị trí
+
+          tbody
+                td
+                  img(
+                    src=detailTour.image
+                    alt=detailTour.title
+                    width="100px"
+                    height="auto"
+                  )
+                td #{detailTour.title}
+                td #{detailTour.price.toLocaleString()}đ
+                td #{detailTour.discount}%
+                td #{detailTour.price_special.toLocaleString()}đ
+                td #{detailTour.stock}
+                td
+                  if (detailTour.status === "active")
+                    a(
+                      href="javascript:;"
+                      class="badge badge-success"
+                    ) Hoạt động
+                  else
+                    a(
+                      href="javascript:;"
+                      class="badge badge-danger"
+                    ) Dừng hoạt động
+                td #{detailTour.position}
+                

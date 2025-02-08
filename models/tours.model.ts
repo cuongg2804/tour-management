@@ -5,7 +5,7 @@ dotenv.config();
 import { title } from "process";
 import { scheduler } from "timers/promises";
 import { deflate } from "zlib";
-
+import slugify from "slugify";
 
 const Tour = sequelize.define("Tour",{
     id: {
@@ -49,8 +49,7 @@ const Tour = sequelize.define("Tour",{
         type: DataTypes.INTEGER,
       },
       slug: {
-        type: DataTypes.STRING(255),
-        allowNull: false,
+        type: DataTypes.STRING(255)
       },
       deleted: {
         type : DataTypes.BOOLEAN,
@@ -65,5 +64,12 @@ const Tour = sequelize.define("Tour",{
     timestamps: true
 }
 );
+
+Tour.beforeCreate((tour) =>{
+  tour["slug"] = slugify(`${tour["title"]}-${Date.now()}`, {
+    lower: true,
+    strict: true
+  })
+})
 
 export default Tour;

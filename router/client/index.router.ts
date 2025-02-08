@@ -5,7 +5,7 @@ import {tourRouter} from "./tour.router";
 import { categoryRouter } from "./category.tour";
 import {cartRouter} from "./cart.router";
 import { orderRouter } from "./order.router";
-const routerAdmin = (app : Express) : void => {
+const routerClient = (app : Express) : void => {
     app.use(`/tours`, tourRouter);
 
     app.use(`/categories`, categoryRouter);
@@ -15,4 +15,4 @@ const routerAdmin = (app : Express) : void => {
     app.use(`/order`, orderRouter);
 }
 
-export default routerAdmin;
+export default routerClient;
