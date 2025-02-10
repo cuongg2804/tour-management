@@ -1,25 +1,13 @@
 extends ../../layouts/default.pug
-include ../../mixins/search.pug
-include ../../mixins/pagination.pug
 
 block main
   h1(class="mb-4") #{pageTitle}
 
 
   .card.mb-30000
-    .card-header Danh sách danh mục
+    .card-header Chi tiết
     .card-body
-      +search(keyword)
-      .row
-        .col-8
-
-        .col-4.text-right
-          a(
-            href=`/${prefixAdmin}/categories/create`
-            class="btn btn-outline-success"
-          ) + Thêm mới
-
-
+     
       table(
         class="table table-hover table-sm mt-3"
       )
@@ -28,23 +16,27 @@ block main
             th STT
             th Hình ảnh
             th Tiêu đề
+            th Vị trí
             th Trạng thái
+            th Số lượng Tour
+            th Mô tả
+            th Ngày tạo
             th Hành động
-
+            
         tbody
-          each item, index in categories
             tr 
               td #{index+1}
               td
                 img(
-                  src=item.image
-                  alt=item.title
+                  src=detailCategory.image
+                  alt=detailCategory.title
                   width="100px"
                   height="auto"
                 )
-              td #{item.title}
+              td #{detailCategory.title}
+              td #{detailCategory.position}
               td
-                if (item.status === "active")
+                if (detailCategory.status === "active")
                   a(
                     href="javascript:;"
                     class="badge badge-success"
@@ -54,19 +46,16 @@ block main
                     href="javascript:;"
                     class="badge badge-danger"
                   ) Dừng hoạt động
+              td #{detailCategory.countTour}
+              td #{detailCategory.description}
+              td #{new Date(detailCategory.createdAt).toISOString().slice(0, 16)}
               td
                 a(
-                  class="btn btn-secondary btn-sm"
-                  href=`/${prefixAdmin}/categories/detail/${item.id}`
-                ) Chi tiết
-                a(
                   class="btn btn-warning btn-sm ml-1"
-                  href=`/${prefixAdmin}/categories/edit/${item.id}`
+                  href=`/${prefixAdmin}/categories/edit/${detailCategory.id}`
                 ) Sửa
                 button(
                   class="btn btn-danger btn-sm ml-1"
-                  button-delete-category
-                  title=item.title
-                  data-id=item.id
+                  button-delete
+                  data-id=detailCategory.id
                 ) Xóa
-  +pagination(objectPagination)

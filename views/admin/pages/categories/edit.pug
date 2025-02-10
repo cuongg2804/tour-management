@@ -1,0 +1,72 @@
+extends ../../layouts/default.pug
+
+block main
+  form(
+    action=`/${prefixAdmin}/categories/edit/${infoCategory.id}?_method=PATCH`
+    method="POST"
+  )
+    div(class="form-group")
+      label(for="title") Tiêu đề
+      input(
+        type="text"
+        class="form-control"
+        id="title"
+        name="title"
+        required
+        value=infoCategory.title
+      )
+    div(class="form-group")
+      label(for="description") Mô tả
+      textarea(
+        type="number"
+        class="form-control"
+        id="description"
+        name="description"
+        value=infoCategory.description
+        textarea-mce
+      )
+    //- div(class="form-group")
+    //-   label(for="images") Hình ảnh
+    //-   input(
+    //-     type="file"
+    //-     class="form-control-file"
+    //-     id="images"
+    //-     name="images"
+    //-     accept="image/*"
+    //-   )
+    div(class="form-group")
+      label(for="position") Vị trí
+      input(
+        type="number"
+        class="form-control"
+        id="position"
+        name="position"
+        placeholder="Tự động tăng"
+        min="1"
+        value=infoCategory.position
+      )
+    div(class="form-group form-check form-check-inline")
+      input(
+        type="radio"
+        class="form-check-input"
+        id="statusActive"
+        name="status"
+        value="active"
+        checked = (infoCategory.status == "active" ? true : false )
+      )
+      label(for="statusActive" class="form-check-label") Hoạt động
+    div(class="form-group form-check form-check-inline")
+      input(
+        type="radio"
+        class="form-check-input"
+        id="statusInActive"
+        name="status"
+        value="inactive"
+        checked = (infoCategory.status == "inactive" ? true : false )
+      )
+      label(for="statusInActive" class="form-check-label") Dừng hoạt động
+    div(class="form-group")
+      button(
+        type="submit"
+        class="btn btn-primary"
+      ) Cập nhật

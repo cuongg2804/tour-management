@@ -1,5 +1,6 @@
 import { DataTypes } from "sequelize";
 import sequelize from "../config/database";
+import slugify from "slugify";
 const Category = sequelize.define("Category", {
     id: {
         type: DataTypes.INTEGER,
@@ -40,5 +41,12 @@ const Category = sequelize.define("Category", {
     timestamps: true
 }
 );
+
+Category.beforeCreate((category) =>{
+    category["slug"] = slugify(`${category["title"]}-${Date.now()}`,{
+        lower : true,
+        strict: true
+    })
+})
 
 export default Category ;

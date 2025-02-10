@@ -5,25 +5,58 @@ import { generateTourCode } from "../../helper/generateCode.helper";
 import Tours_Categories from "../../models/tours_categories.model";
 import { parse } from "path";
 import {systemConfig} from "../../config/system";
+import {Op} from "sequelize";
+
 
 export const index = async (req : Request, res : Response) => {
-    const listTour = await Tour.findAll({
-        where : {
+    try {
+        const find = {
             deleted : false
-        },
-        raw: true
-    })
-    listTour.forEach(item => {
-        if(item["images"]){
-            const images = JSON.parse(item["images"]);
-            item["image"] = images[0];
         }
-        item["price_special"] = (item["price"] * (1 - item["discount"] / 100));
-    })
-    res.render("admin/pages/tour/index.pug",{
-        pageTitle :"Danh sách Tour",
-        tours : listTour
-    }) 
+    
+        //Search 
+        if (req.query.keyword) {
+            find["title"] = { [Op.like]: `%${req.query.keyword}%` };
+        }
+    
+        //Pagination
+        let objectPagination = {
+            currentPage: 1,
+            limitItems: 4,
+            skip: 0,
+            totalPage: 0
+        }
+    
+        if(+(req.query.page) > 0) {
+            objectPagination.currentPage = +(req.query.page);
+        }
+        
+        objectPagination.skip = (objectPagination.currentPage - 1 ) * objectPagination.limitItems;
+        const countRecords = await Tour.count();
+        objectPagination.totalPage = Math.ceil(countRecords/objectPagination.limitItems);
+        
+        const listTour = await Tour.findAll({
+            where : find,
+            limit : objectPagination.limitItems,
+            offset : objectPagination.skip,
+            raw: true
+        })
+        listTour.forEach(item => {
+            if(item["images"]){
+                const images = JSON.parse(item["images"]);
+                item["image"] = images[0];
+            }
+            item["price_special"] = (item["price"] * (1 - item["discount"] / 100));
+        })
+        res.render("admin/pages/tour/index.pug",{
+            pageTitle :"Danh sách Tour",
+            tours : listTour,
+            keyword :  req.query.keyword,
+            objectPagination : objectPagination
+        }) 
+    } catch (error) {
+        res.redirect("back");
+    }
 }
 
 
@@ -43,6 +76,7 @@ export const create = async (req : Request, res : Response) => {
 }
 
 export const createPost = async (req : Request, res : Response) => {
+   try {
     if(!req.body.position){
         req.body.position = await Tour.count() + 1;
     }
@@ -77,30 +111,37 @@ export const createPost = async (req : Request, res : Response) => {
         tour_id : idTour,
         category_id : parseInt(req.body.category_id)
     }
-    await Tours_Categories.create(tours_categories)
-    
+    await Tours_Categories.create(tours_categories);
+
     res.redirect(`/${systemConfig.PREFIX_ADMIN}` +`/tours`);
+    
+   } catch (error) {
+   }
 
 }
 // [GET] /admin/tours/detail/id
 export const detail = async (req : Request, res : Response) => {
-    const detailTour = await Tour.findOne({
-        where:{
-            id : req.params.id,
-            deleted : false,
-            status : "active"
-        },
-        raw : true
-    })
-    if(detailTour["images"]){
-        const images = JSON.parse(detailTour["images"]);
-        detailTour["image"] = images[0];
+    try {
+        const detailTour = await Tour.findOne({
+            where:{
+                id : req.params.id,
+                deleted : false,
+                status : "active"
+            },
+            raw : true
+        })
+        if(detailTour["images"]){
+            const images = JSON.parse(detailTour["images"]);
+            detailTour["image"] = images[0];
+        }
+        detailTour["price_special"] = (detailTour["price"] * (1 - detailTour["discount"] / 100));
+        res.render("admin/pages/tour/detail.pug",{
+            pageTitle : `Chi tiết Tour ${detailTour["title"]}`,
+            detailTour : detailTour
+        })
+    } catch (error) {
+        res.redirect("back");
     }
-    detailTour["price_special"] = (detailTour["price"] * (1 - detailTour["discount"] / 100));
-    res.render("admin/pages/tour/detail.pug",{
-        pageTitle : `Chi tiết Tour ${detailTour["title"]}`,
-        detailTour : detailTour
-    })
 }
 
 // [GET] /admin/tours/edit/id
@@ -162,4 +203,35 @@ export const editPatch = async (req : Request, res : Response) => {
     });
    
     res.redirect(`/${systemConfig.PREFIX_ADMIN}/tours`);
+}
+
+// [POST] /admin/tours/delete/:id
+
+export const deleted = async (req : Request, res : Response) => {
+    
+    await Tour.update({
+        deleted : true
+    },{
+        where : {
+            id : req.params.id
+        }
+    })
+
+    res.json({
+        code : 200,
+        message :"Xóa thành công !"
+    })
+}
+
+// [GET] /admin/tours/:status/:id
+
+export const changeStatus = async (req : Request, res : Response) => {
+    await Tour.update({
+        status : req.params.status
+    },{
+        where:{
+            id : req.params.id
+        }
+    })
+    res.redirect("back");
 }

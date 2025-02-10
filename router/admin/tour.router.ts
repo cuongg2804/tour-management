@@ -34,4 +34,12 @@ router.patch("/edit/:id",
     uploadCloud.uploadFields,
     controller.editPatch);
 
+// [POST] /admin/tours/delete/:id
+
+router.post("/delete/:id",controller.deleted);
+
+// [GET] /admin/tours/:status/:id
+
+router.get("/:status/:id", controller.changeStatus);
+
 export const tourRouter : Router = router;

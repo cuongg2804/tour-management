@@ -1,15 +1,19 @@
 extends ../../layouts/default.pug
-
+include ../../mixins/search.pug
+include ../../mixins/pagination.pug
 block main
   h1(class="mb-4") #{pageTitle}
-
+  
+   
 
   .card.mb-3
       .card-header Danh sách
       .card-body
+
+        +search(keyword)
+
         .row
           .col-8
-
           .col-4.text-right
             a(
               href=`/${prefixAdmin}/tours/create`
@@ -52,12 +56,12 @@ block main
                 td
                   if (item.status === "active")
                     a(
-                      href="javascript:;"
+                      href=`/admin/tours/inactive/${item.id}`
                       class="badge badge-success"
                     ) Hoạt động
                   else
                     a(
-                      href="javascript:;"
+                      href=`/admin/tours/active/${item.id}`
                       class="badge badge-danger"
                     ) Dừng hoạt động
                 td #{item.position}
@@ -74,4 +78,6 @@ block main
                     class="btn btn-danger btn-sm ml-1"
                     button-delete
                     data-id=item.id
+                    title = item.title
                   ) Xóa
+  +pagination(objectPagination)

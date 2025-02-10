@@ -1,0 +1,111 @@
+extends ../../layouts/default.pug
+
+block main
+  h1(class="mb-4") Nhóm quyền
+
+  .card.mb-3
+    .card-header Danh sách
+    .card-body
+      .row
+        .col-8
+        .col-4.text-right
+          a(
+            href=`/${prefixAdmin}/roles/create`
+            class="btn btn-outline-success"
+          ) + Thêm mới
+
+      table(
+        class="table table-hover table-sm"
+      )
+        thead
+          tr
+            th STT
+            th Nhóm quyền
+            th Mô tả ngắn
+            th Hành động
+
+        tbody
+          if(records.length > 0)
+            each item, index in records
+              tr
+                td #{index + 1}
+                td #{item.title}
+                td #{item.description}
+                td
+                  a(
+                    class="btn btn-secondary btn-sm"
+                    href=`/${prefixAdmin}/roles/detail/${item.id}`
+                  ) Chi tiết
+                  a(
+                    class="btn btn-warning btn-sm ml-1"
+                    href=`/${prefixAdmin}/roles/edit/${item.id}`
+                  ) Sửa
+                  button(
+                    class="btn btn-danger btn-sm ml-1"
+                  ) Xóa
+          else
+            tr
+              td(colspan="4" class="text-center") Chưa có nhóm quyền nào được tạo.
+    .card-header Phân quyền
+    if(records)
+        div(data-records=records)
+
+        table(
+        class="table table-hover table-sm"
+        table-permissions
+        )
+            thead
+                tr
+                        th Tính năng
+                        each item in records
+                            th(class="text-center") #{item.title}
+            tbody
+                tr(data-name="id" class="d-none")
+                    td Id nhóm quyền
+                    each item in records
+                        td(class="text-center")
+                            input(type="text" value=item.id)
+                tr
+                    td(colspan="4")
+                        b Danh mục sản phẩm
+                tr(data-name="products-category_view")
+                    td Xem
+                    each item in records
+                        td(class="text-center")
+                            input(type="checkbox")
+                tr(data-name="products-category_create")
+                    td Thêm mới
+                    each item in records
+                        td(class="text-center")
+                            input(type="checkbox")
+                tr(data-name="products-category_edit")
+                    td Chỉnh sửa
+                    each item in records
+                        td(class="text-center")
+                            input(type="checkbox")
+                tr(data-name="products-category_delete")
+                    td Xóa
+                    each item in records
+                        td(class="text-center")
+                            input(type="checkbox")
+            
+        form(
+                form-change-permissions
+                method="POST"
+                action=`/${prefixAdmin}/roles/permissions?_method=PATCH`
+                class="d-none"
+            )
+                div(class="form-group")
+                    input(
+                    type="text"
+                    class="form-control"
+                    name="roles"
+                    )
+        div(class="text-right")
+            button(
+                type="submit"
+                class="btn btn-primary mb-3"
+                button-submit-permissions
+            ) Cập nhật    
+    else
+        p Chưa có nhóm quyền nào
